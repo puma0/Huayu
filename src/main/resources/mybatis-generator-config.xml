@@ -59,7 +59,7 @@
         </javaClientGenerator>
         
         <!-- tableName:用于自动生成代码的数据库表；domainObjectName:对应于数据库表的javaBean类名 --> 
-        <table tableName="H_TEST" domainObjectName="HTest" 
+        <table tableName="PROJECT_START" domainObjectName="ProjectStart" 
         	enableCountByExample="false" enableUpdateByExample="false"
             enableDeleteByExample="false" enableSelectByExample="false"
         	selectByExampleQueryId="false">

@@ -79,6 +79,13 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet</artifactId>
+			<version>6.0.30</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- log4j -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -131,11 +138,6 @@
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
         </dependency>
-        <dependency>
-		  <groupId>oracle.jdbc</groupId>
-		  <artifactId>oracle.jdbc</artifactId>
-		  <version>6</version>
-		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>

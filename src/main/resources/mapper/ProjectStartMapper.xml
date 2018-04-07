@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProjectStartMapper">
+  <resultMap id="BaseResultMap" type="com.huayu.entity.ProjectStart">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="project_type" jdbcType="VARCHAR" property="projectType" />
+    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="project_number" jdbcType="VARCHAR" property="projectNumber" />
+    <result column="contract_number" jdbcType="VARCHAR" property="contractNumber" />
+    <result column="floor" jdbcType="VARCHAR" property="floor" />
+    <result column="project_price" jdbcType="VARCHAR" property="projectPrice" />
+    <result column="start_date_plan" jdbcType="VARCHAR" property="startDatePlan" />
+    <result column="end_date_plan" jdbcType="VARCHAR" property="endDatePlan" />
+    <result column="actual_date" jdbcType="VARCHAR" property="actualDate" />
+    <result column="plan_days" jdbcType="VARCHAR" property="planDays" />
+    <result column="condition" jdbcType="VARCHAR" property="condition" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.huayu.entity.ProjectStart">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="reason" jdbcType="LONGVARCHAR" property="reason" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, project_type, project_name, address, project_number, contract_number, floor, 
+    project_price, start_date_plan, end_date_plan, actual_date, plan_days, condition
+  </sql>
+  <sql id="Blob_Column_List">
+    content, reason
+  </sql>
+  <select id="selectAll"  parameterType="java.util.Map" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from PROJECT_START
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from PROJECT_START
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from PROJECT_START
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huayu.entity.ProjectStart">
+    insert into PROJECT_START (project_type, project_name, 
+      address, project_number, contract_number, 
+      floor, project_price, start_date_plan, 
+      end_date_plan, actual_date, plan_days, 
+      condition, content, reason
+      )
+    values (#{projectType,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{projectNumber,jdbcType=VARCHAR}, #{contractNumber,jdbcType=VARCHAR}, 
+      #{floor,jdbcType=VARCHAR}, #{projectPrice,jdbcType=VARCHAR}, #{startDatePlan,jdbcType=VARCHAR}, 
+      #{endDatePlan,jdbcType=VARCHAR}, #{actualDate,jdbcType=VARCHAR}, #{planDays,jdbcType=VARCHAR}, 
+      #{condition,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}, #{reason,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huayu.entity.ProjectStart">
+    insert into PROJECT_START
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="projectType != null">
+        project_type,
+      </if>
+      <if test="projectName != null">
+        project_name,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="projectNumber != null">
+        project_number,
+      </if>
+      <if test="contractNumber != null">
+        contract_number,
+      </if>
+      <if test="floor != null">
+        floor,
+      </if>
+      <if test="projectPrice != null">
+        project_price,
+      </if>
+      <if test="startDatePlan != null">
+        start_date_plan,
+      </if>
+      <if test="endDatePlan != null">
+        end_date_plan,
+      </if>
+      <if test="actualDate != null">
+        actual_date,
+      </if>
+      <if test="planDays != null">
+        plan_days,
+      </if>
+      <if test="condition != null">
+        condition,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="reason != null">
+        reason,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="projectType != null">
+        #{projectType,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="projectNumber != null">
+        #{projectNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNumber != null">
+        #{contractNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null">
+        #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="projectPrice != null">
+        #{projectPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="startDatePlan != null">
+        #{startDatePlan,jdbcType=VARCHAR},
+      </if>
+      <if test="endDatePlan != null">
+        #{endDatePlan,jdbcType=VARCHAR},
+      </if>
+      <if test="actualDate != null">
+        #{actualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="planDays != null">
+        #{planDays,jdbcType=VARCHAR},
+      </if>
+      <if test="condition != null">
+        #{condition,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="reason != null">
+        #{reason,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huayu.entity.ProjectStart">
+    update PROJECT_START
+    <set>
+      <if test="projectType != null">
+        project_type = #{projectType,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="projectNumber != null">
+        project_number = #{projectNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNumber != null">
+        contract_number = #{contractNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="floor != null">
+        floor = #{floor,jdbcType=VARCHAR},
+      </if>
+      <if test="projectPrice != null">
+        project_price = #{projectPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="startDatePlan != null">
+        start_date_plan = #{startDatePlan,jdbcType=VARCHAR},
+      </if>
+      <if test="endDatePlan != null">
+        end_date_plan = #{endDatePlan,jdbcType=VARCHAR},
+      </if>
+      <if test="actualDate != null">
+        actual_date = #{actualDate,jdbcType=VARCHAR},
+      </if>
+      <if test="planDays != null">
+        plan_days = #{planDays,jdbcType=VARCHAR},
+      </if>
+      <if test="condition != null">
+        condition = #{condition,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="reason != null">
+        reason = #{reason,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huayu.entity.ProjectStart">
+    update PROJECT_START
+    set project_type = #{projectType,jdbcType=VARCHAR},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      project_number = #{projectNumber,jdbcType=VARCHAR},
+      contract_number = #{contractNumber,jdbcType=VARCHAR},
+      floor = #{floor,jdbcType=VARCHAR},
+      project_price = #{projectPrice,jdbcType=VARCHAR},
+      start_date_plan = #{startDatePlan,jdbcType=VARCHAR},
+      end_date_plan = #{endDatePlan,jdbcType=VARCHAR},
+      actual_date = #{actualDate,jdbcType=VARCHAR},
+      plan_days = #{planDays,jdbcType=VARCHAR},
+      condition = #{condition,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR},
+      reason = #{reason,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huayu.entity.ProjectStart">
+    update PROJECT_START
+    set project_type = #{projectType,jdbcType=VARCHAR},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      project_number = #{projectNumber,jdbcType=VARCHAR},
+      contract_number = #{contractNumber,jdbcType=VARCHAR},
+      floor = #{floor,jdbcType=VARCHAR},
+      project_price = #{projectPrice,jdbcType=VARCHAR},
+      start_date_plan = #{startDatePlan,jdbcType=VARCHAR},
+      end_date_plan = #{endDatePlan,jdbcType=VARCHAR},
+      actual_date = #{actualDate,jdbcType=VARCHAR},
+      plan_days = #{planDays,jdbcType=VARCHAR},
+      condition = #{condition,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
