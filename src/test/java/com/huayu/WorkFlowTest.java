@@ -9,6 +9,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.generator.api.ShellRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,7 +43,7 @@ public class WorkFlowTest {
 
 	@Test
 	public void findMyPersonTask() {
-		String assignee = "test1";
+		String assignee = "test3";
 		List<Task> taskList = processEngine.getTaskService()//获取任务service  
 				.createTaskQuery()//创建查询对象  
 				.taskAssignee(assignee)//指定查询人  
@@ -64,6 +65,11 @@ public class WorkFlowTest {
 		String taskId = "2504";
 		processEngine.getTaskService().complete(taskId);//完成任务  
 		System.out.println("完成任务，任务ID" + taskId);
+	}
+
+	public static void main(String[] args) {
+		args = new String[] { "-configfile", "src\\main\\resources\\mybatis-generator-config.xml", "-overwrite" };
+		ShellRunner.main(args);
 	}
 
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    
+    <!--导入数据库连接属性配置 -->
+    <properties resource="generator.properties"/>
+    <!--指定特定数据库的jdbc驱动jar包的位置(本地仓库mysql驱动所在位置) -->
+    <classPathEntry location="${driver.class.path}"/>
+
+	<!-- 配置数据源和生成的代码所存放的位置 -->
+    <context id="default" targetRuntime="MyBatis3" defaultModelType="flat">
+        <property name="beginningDelimiter" value="`" />
+        <property name="endingDelimiter" value="`" />
+
+        <!--是否去除自动生成的注释 true：是 ： false:否 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--jdbc的数据库连接 -->
+        <jdbcConnection driverClass="${jdbc.driver}"
+                        connectionURL="${jdbc.url}"
+                        userId="${jdbc.username}"
+                        password="${jdbc.password}">
+        </jdbcConnection>
+
+
+         <!-- 
+            true：使用BigDecimal对应DECIMAL和 NUMERIC数据类型
+            false：默认,
+                scale>0;length>18：使用BigDecimal;
+                scale=0;length[10,18]：使用Long；
+                scale=0;length[5,9]：使用Integer；
+                scale=0;length<5：使用Short；
+         -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+		<!-- 生成模型的包名和位置--> 
+        <javaModelGenerator targetPackage="${package.model}" targetProject="${target.project}">
+            <!-- 是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="true"/>
+            <!-- 从数据库返回的值被清理前后的空格  -->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+		<!-- 生成映射文件的包名和位置 -->
+        <!--Mapper映射文件生成所在的目录 为每一个数据库的表生成对应的SqlMap文件 -->
+        <sqlMapGenerator targetPackage="${package.mapper.xml}" targetProject="${target.resources}">
+        	<property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+		<!-- 生成DAO的包名和位置-->
+        <javaClientGenerator targetPackage="${package.mapper.java}" targetProject="${target.project}" type="XMLMAPPER">
+        	<property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        
+        <!-- tableName:用于自动生成代码的数据库表；domainObjectName:对应于数据库表的javaBean类名 --> 
+        <table tableName="H_TEST" domainObjectName="HTest" 
+        	enableCountByExample="false" enableUpdateByExample="false"
+            enableDeleteByExample="false" enableSelectByExample="false"
+        	selectByExampleQueryId="false">
+        	
+        	<property name="useActualColumnNames" value="false" />
+            <!-- <generatedKey column="id" sqlStatement="Mysql"/> -->
+        </table>
+
+    </context>
+</generatorConfiguration>
