@@ -43,7 +43,7 @@ public class WorkFlowTest {
 
 	@Test
 	public void findMyPersonTask() {
-		String assignee = "test3";
+		String assignee = "test1";
 		List<Task> taskList = processEngine.getTaskService()//获取任务service  
 				.createTaskQuery()//创建查询对象  
 				.taskAssignee(assignee)//指定查询人  

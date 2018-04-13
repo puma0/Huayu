@@ -16,13 +16,17 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.impl.pvm.process.TransitionImpl;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
 import org.slf4j.Logger;
@@ -68,10 +72,10 @@ public class ProjectStartController {
 		Map<String, String> resMap = new HashMap<String, String>();
 		int res = projectStartService.insertSelective(start);
 		if (res > 0) {
-			resMap.put("stats", "1");
+			resMap.put("status", "1");
 			resMap.put("msg", "新增开工申请成功！");
 		} else {
-			resMap.put("stats", "0");
+			resMap.put("status", "0");
 			resMap.put("msg", "新增开工申请失败！");
 		}
 		return resMap;
@@ -87,10 +91,10 @@ public class ProjectStartController {
 		Map<String, String> resMap = new HashMap<String, String>();
 		int res = projectStartService.updateByPrimaryKeySelective(start);
 		if (res > 0) {
-			resMap.put("stats", "1");
+			resMap.put("status", "1");
 			resMap.put("msg", "修改开工申请成功！");
 		} else {
-			resMap.put("stats", "0");
+			resMap.put("status", "0");
 			resMap.put("msg", "修改开工申请失败！");
 		}
 		return resMap;
@@ -106,10 +110,10 @@ public class ProjectStartController {
 		Map<String, String> resMap = new HashMap<String, String>();
 		int res = projectStartService.deleteByPrimaryKey(id);
 		if (res > 0) {
-			resMap.put("stats", "1");
+			resMap.put("status", "1");
 			resMap.put("msg", "删除开工申请成功！");
 		} else {
-			resMap.put("stats", "0");
+			resMap.put("status", "0");
 			resMap.put("msg", "删除开工申请失败！");
 		}
 		return resMap;
@@ -135,13 +139,97 @@ public class ProjectStartController {
 		//同时向正在执行的执行对象表中的字段BUSINESS_KEY添加业务数据，同时让流程关联业务  
 		try {
 			runtimeService.startProcessInstanceByKey(key, objId, variables);
-			resMap.put("stats", "1");
+			resMap.put("status", "1");
 			resMap.put("msg", "提交开工申请成功！");
 		} catch (Exception e) {
-			resMap.put("stats", "0");
+			resMap.put("status", "0");
 			resMap.put("msg", "提交开工申请失败！");
 		}
 		return resMap;
+	}
+
+	/**
+	 * 审批通过
+	 * @param taskId
+	 * @param message
+	 */
+	@RequestMapping(value = "/complementTask.do")
+	public void complementTask(String taskId, String message) {
+		TaskService taskService = processEngine.getTaskService();
+		// 使用任务服务完成任务(提交任务)
+		// 使用任务id,获取任务对象，获取流程实例id
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		//利用任务对象，获取流程实例id
+		String processInstancesId = task.getProcessInstanceId();
+		//System.out.println(processInstancesId);
+		Authentication.setAuthenticatedUserId("cmc"); // 添加批注时候的审核人，通常应该从session获取
+		taskService.addComment(taskId, processInstancesId, message);
+		taskService.complete(taskId);
+	}
+
+	/**
+	 * 审批驳回
+	 * @param taskId
+	 */
+	@RequestMapping(value = "/complementTask.do")
+	public void rejectTask(String procInstId, String destTaskKey, String rejectMessage) {
+		//获得当前任务的对应实列
+		TaskService taskService = processEngine.getTaskService();
+		Task taskEntity = taskService.createTaskQuery().processInstanceId(procInstId).singleResult();
+		//当前任务key
+		String taskDefKey = taskEntity.getTaskDefinitionKey();
+		//获得当前流程的定义模型
+		ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
+				.getDeployedProcessDefinition(taskEntity.getProcessDefinitionId());
+		//获得当前流程定义模型的所有任务节点
+		List<ActivityImpl> activitilist = processDefinition.getActivities();
+		//获得当前活动节点和驳回的目标节点"draft"
+		ActivityImpl currActiviti = null;//当前活动节点
+		ActivityImpl destActiviti = null;//驳回目标节点
+		int sign = 0;
+		for (ActivityImpl activityImpl : activitilist) {
+			//确定当前活动activiti节点
+			if (taskDefKey.equals(activityImpl.getId())) {
+				currActiviti = activityImpl;
+				sign++;
+			} else if (destTaskKey.equals(activityImpl.getId())) {
+				destActiviti = activityImpl;
+				sign++;
+			}
+			//System.out.println("//-->activityImpl.getId():"+activityImpl.getId());
+			if (sign == 2) {
+				break;//如果两个节点都获得,退出跳出循环
+			}
+		}
+		System.out.println("//-->currActiviti activityImpl.getId():" + currActiviti.getId());
+		System.out.println("//-->destActiviti activityImpl.getId():" + destActiviti.getId());
+		//保存当前活动节点的流程想参数
+		List<PvmTransition> hisPvmTransitionList = new ArrayList<PvmTransition>(0);
+		for (PvmTransition pvmTransition : currActiviti.getOutgoingTransitions()) {
+			hisPvmTransitionList.add(pvmTransition);
+		}
+		//清空当前活动几点的所有流出项
+		currActiviti.getOutgoingTransitions().clear();
+		System.out.println(
+				"//-->currActiviti.getOutgoingTransitions().clear():" + currActiviti.getOutgoingTransitions().size());
+		//为当前节点动态创建新的流出项
+		TransitionImpl newTransitionImpl = currActiviti.createOutgoingTransition();
+		//为当前活动节点新的流出目标指定流程目标
+		newTransitionImpl.setDestination(destActiviti);
+		//保存驳回意见
+		taskEntity.setDescription(rejectMessage);//设置驳回意见
+		taskService.saveTask(taskEntity);
+		//设定驳回标志  
+		Map<String, Object> variables = new HashMap<String, Object>(0);
+		//variables.put(WfConstant.WF_VAR_IS_REJECTED.value(), WfConstant.IS_REJECTED.value());
+		//执行当前任务驳回到目标任务draft
+		taskService.complete(taskEntity.getId(), variables);
+		//清除目标节点的新流入项
+		destActiviti.getIncomingTransitions().remove(newTransitionImpl);
+		//清除原活动节点的临时流程项
+		currActiviti.getOutgoingTransitions().clear();
+		//还原原活动节点流出项参数
+		currActiviti.getOutgoingTransitions().addAll(hisPvmTransitionList);
 	}
 
 	/**
@@ -203,10 +291,10 @@ public class ProjectStartController {
 		try {
 			processEngine.getRepositoryService()//与流程定义和部署对象相关的Service
 					.deleteDeployment(deploymentId, true);
-			resMap.put("stats", "1");
+			resMap.put("status", "1");
 			resMap.put("msg", "删除流程成功！");
 		} catch (Exception e) {
-			resMap.put("stats", "0");
+			resMap.put("status", "0");
 			resMap.put("msg", "删除流程失败！");
 			log.error(e.getMessage());
 		}
@@ -298,5 +386,4 @@ public class ProjectStartController {
 		}
 		return highFlows;
 	}
-
 }
