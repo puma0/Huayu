@@ -1,6 +1,7 @@
 package com.huayu.dao;
 
-import com.github.pagehelper.PageInfo;
+import java.util.List;
+
 import com.huayu.entity.HTest;
 
 public interface HTestMapper {
@@ -8,5 +9,5 @@ public interface HTestMapper {
 
 	int insertSelective(HTest record);
 
-	PageInfo<HTest> getPage(int pageNo, int pageSize);
+	List<HTest> selectAll();
 }

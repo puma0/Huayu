@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huayu.entity.ProjectStart;
-import com.huayu.service.IProjectStartService;
+import com.huayu.service.ProjectStartServiceImpl;
 
 /**
  * 开工申请控制器
@@ -50,7 +50,7 @@ public class ProjectStartController {
 	protected static Logger log = LoggerFactory.getLogger(ProjectStartController.class);
 
 	@Autowired
-	IProjectStartService projectStartService;
+	ProjectStartServiceImpl projectStartService;
 	@Autowired
 	ProcessEngine processEngine;
 	@Autowired
